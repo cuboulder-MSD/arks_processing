@@ -14,6 +14,6 @@ This script mints ARKs based on URLs for items in the CUDL.
 
 1. Export metadata from CUDL.
 2. Make sure 'Identifier ARK' is a column in the csv.
-3. ```python mintARKs.py [input file] [output file]
+3.  ```python mintARKs.py [input file] [output file]
 4. Run the script on **test**, then on **prod**
 5. Reupload csv to CUDL
