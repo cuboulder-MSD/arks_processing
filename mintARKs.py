@@ -17,7 +17,7 @@ def getARK(url, luna_url, title, rights, type, filename, user):
     auth_token = ''
 
 
-    data={"resolve_url": luna_url ,"metadata":{"mods": {"titleInfo":[{"title": title}],"typeOfResource": type, "accessCondition": rights}},"generated_by": user,"status": "active"}
+    data={"resolve_url": luna_url ,"metadata":{"mods": {"titleInfo":[{"title": title}],"typeOfResource": type, "identifier": filename, "accessCondition": rights}},"generated_by": user,"status": "active"}
     # print(data)
 
     headers={"Content-Type":"application/json","Authorization":"Token " + auth_token}
