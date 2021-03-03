@@ -53,7 +53,7 @@ def main():
 
          for row in reader:
              # print(row)
-             if len(row['Identifier ARK']) == 0:
+             if len(row['Identifier ARK#1']) == 0:
                  # print(row['Title#1'])
                  luna_url = row['lnexp_PAGEURL']
                  title = row['Title#1']
@@ -61,7 +61,7 @@ def main():
                  type = row['Resource Type#1']
                  filename = row['Identifier#1']
                  ark = getARK(url, luna_url, title, rights, type, filename, user)
-                 row['Identifier ARK'] = 'https://ark.colorado.edu/ark:/' + ark
+                 row['Identifier ARK#1'] = 'https://ark.colorado.edu/ark:/' + ark
                  writer.writerow(row)
              else:
                  writer.writerow(row)
