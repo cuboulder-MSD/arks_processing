@@ -46,7 +46,7 @@ def main():
          # fields.append('Identifier ARK')
          writer = csv.DictWriter(outfile, fieldnames=fields)
          writer.writeheader()
-         user = input("who are you?").lower()
+         user = input("enter your last name").lower()
          batchRef = input('enter a collection reference (e.g. snow, nsidc, zss, bent-hyde)') + '_' + str(uuid.uuid4())
 
          url = chooseURL()
