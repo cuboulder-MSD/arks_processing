@@ -12,8 +12,11 @@ This script pulls down all ARKs that are currently in the server, and outputs th
 
 This script mints ARKs based on URLs for items in the CUDL.
 
-1. Export metadata from CUDL.
-2. Make sure 'Identifier ARK' is a column in the csv.
-3. On the CLI run ```python mintARKs.py inputfile.csv outputfile.csv.``` Output file can be whatever you would like to call it.
-4. Run the script on **test**, then on **prod** when test is running successfully.
-5. Reupload csv to CUDL
+1. Export metadata from CUDL
+2. Make sure 'Identifier ARK#1' is a column in the csv
+3. On the CLI run ```python mintARKs.py inputfile.csv outputfile.csv.``` Output file can be whatever you would like to call it
+4. Run the script on **test**
+5. Make sure that no ARKs were overwritten between the input and output file
+6. Run on **prod**
+7. Check that ARKs in prod spreadsheet resolve correctly
+8. Reupload csv to CUDL
