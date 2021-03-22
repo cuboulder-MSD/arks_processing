@@ -20,3 +20,14 @@ This script mints ARKs based on URLs for items in the CUDL.
 6. Run on **prod**
 7. Check that ARKs in prod spreadsheet resolve correctly
 8. Reupload csv to CUDL
+
+**deleteARKs.py**
+
+This script takes a csv of ARKs and deletes them.
+
+1. Export metadata from CUDL
+2. Make sure 'Identifier ARK#1' is a column in the csv
+3. On the CLI run ```python deleteARKs.py inputfile.csv``` 
+4. Check that ARKs in spreadsheet no longer resolve 
+5. Reupload csv to CUDL
+
