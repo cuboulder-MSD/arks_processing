@@ -29,5 +29,5 @@ This script takes a csv of ARKs and deletes them.
 2. Make sure 'Identifier ARK#1' is a column in the csv
 3. On the CLI run ```python deleteARKs.py inputfile.csv``` 
 4. Check that ARKs in spreadsheet no longer resolve 
-5. Reupload csv to CUDL
+5. Remove AKRs from spreadsheet and reupload csv to CUDL
 
