@@ -3,7 +3,7 @@ from datetime import datetime
 
 def chooseURL():
     urls = {"prod": "https://libapps.colorado.edu/ark:/", "test": "https://test-libapps.colorado.edu/ark:/"}
-    user_response = input("Do you want to run on prod or test? [prod/test]").lower()
+    user_response = input("Do you want to run on prod or test? [prod/test]:").lower()
     if user_response not in urls:
         raise RuntimeError("%s is not a valid env" % user_response)
 
@@ -46,8 +46,8 @@ def main():
          # fields.append('Identifier ARK')
          writer = csv.DictWriter(outfile, fieldnames=fields)
          writer.writeheader()
-         user = input("enter your last name").lower()
-         batchRef = input('enter a collection reference (e.g. snow, nsidc, zss, bent-hyde)') + '_' + str(uuid.uuid4())
+         user = input("enter your last name:").lower()
+         batchRef = input('enter a collection reference (e.g. snow, nsidc, zss, bent-hyde):') + '_' + str(uuid.uuid4())
 
          url = chooseURL()
 
