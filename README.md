@@ -31,3 +31,9 @@ This script takes a csv of ARKs and deletes them.
 4. Check that ARKs in spreadsheet no longer resolve 
 5. Remove AKRs from spreadsheet and reupload csv to CUDL
 
+**testARKs.py**
+
+This script takes a list of ARKs and tests them for HTTP errors. Prints results to terminal.
+
+1. Run ```python getARKs.py```
+2. Run ```python testARKs.py [output file from step 1]```
