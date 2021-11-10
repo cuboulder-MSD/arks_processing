@@ -40,7 +40,7 @@ def main():
     outfile_path = sys.argv[2]
 
 
-    with open(infile_path, encoding='utf-8', newline='' ) as csvfile, open(outfile_path, "w") as outfile:
+    with open(infile_path, encoding='utf-8', newline='' ) as csvfile, open(outfile_path, "w",  encoding='utf-8') as outfile:
          reader = csv.DictReader(csvfile)
          fields = reader.fieldnames
          # fields.append('Identifier ARK')
