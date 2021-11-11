@@ -39,7 +39,7 @@ def main():
     infile_path = sys.argv[1]
     outfile_path = sys.argv[2]
 
-
+    #if utf-8 doesnt work, try iso-8859-1
     with open(infile_path, encoding='utf-8', newline='' ) as csvfile, open(outfile_path, "w",  encoding='utf-8') as outfile:
          reader = csv.DictReader(csvfile)
          fields = reader.fieldnames
