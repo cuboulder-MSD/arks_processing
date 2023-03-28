@@ -2,6 +2,8 @@
 
 This repo contains code to retrieve and mint ARKs. For both scripts you will need to put your authorization token in ```auth_token```
 
+You can find the auth token here https://libapps.colorado.edu/api/user/
+
 **getARKs.py**
 
 This script pulls down all ARKs that are currently in the server, and outputs them in a csv ```arks_[current date].csv```
