@@ -14,7 +14,7 @@ def chooseURL():
 
 
 def getARK(url, luna_url, title, rights, type, filename, user):
-    auth_token = '8dc02468946f7a9ed3733ed4514023203fa4ac81'
+    auth_token = ''
 
 
     data={"resolve_url": luna_url ,"metadata":{"mods": {"titleInfo":[{"title": title}],"typeOfResource": type, "identifier": filename, "accessCondition": rights}},"generated_by": user,"status": "active"}
