@@ -34,23 +34,27 @@ def getARK(url, luna_url, title, rights, type, filename, user):
     # print(ark)
 
 
-def get_value(reader, row, fieldnames):
+def get_field_value(reader, row, fieldnames):
     for fieldname in fieldnames:
-        if fieldname in reader.fieldnames and row.get(fieldname):
-            return row[fieldname]
-    return ''
-    
+        if fieldname in reader.fieldnames:
+            value = row.get(fieldname)
+            if value:
+                return value
+            else:
+                raise ValueError("Missing value for field: {fieldname}")
+    raise ValueError(f"No matching field found in {reader.fieldnames}")
+
 def get_title(reader, row):
-    return get_value(reader, row, ['Title#1', 'Title', 'County Set Name#1', 'County Set Name', 'Work Title#1', 'Work Title'])
+    return get_field_value(reader, row, ['Title#1', 'Title', 'County Set Name#1', 'County Set Name', 'Work Title#1', 'Work Title'])
 
 def get_rights(reader, row):
-    return get_value(reader, row, ['Access Condition#1', 'Access Condition', 'Rights#1', 'Rights', 'Image Rights#1', 'Image Rights', 'Rights Statement#1', 'Rights Statement', 'Conditions of Use#1', 'Conditions of Use'])
-    
+    return get_field_value(reader, row, ['Access Condition#1', 'Access Condition', 'Rights#1', 'Rights', 'Image Rights#1', 'Image Rights', 'Rights Statement#1', 'Rights Statement', 'Conditions of Use#1', 'Conditions of Use'])
+
 def get_type(reader, row):
-    return get_value(reader, row, ['Resource Type#1', 'Resource Type', 'Type#1', 'Type', 'Type of Resource#1', 'Type of Resource', 'Work Type#1', 'Work Type', 'formatMediaType#1', 'formatMediaType#2', 'formatMediaType', 'IANA Media Type#1'])
-    
+    return get_field_value(reader, row, ['Resource Type#1', 'Resource Type', 'Type#1', 'Type', 'Type of Resource#1', 'Type of Resource', 'Work Type#1', 'Work Type', 'formatMediaType#1', 'formatMediaType#2', 'formatMediaType', 'IANA Media Type#1'])
+
 def get_filename(reader, row):
-    return get_value(reader, row, ['Identifier#1', 'Identifier#2', 'Identifier', 'FileID#1', 'FileID#2', 'FileID', 'File Name'])
+    return get_field_value(reader, row, ['Identifier#1', 'Identifier#2', 'Identifier', 'FileID#1', 'FileID#2', 'FileID', 'File Name'])
     
 def main():
     # Grab our infile_path and outfile_path from the cli
