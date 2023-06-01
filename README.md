@@ -39,3 +39,9 @@ This script takes a list of ARKs and tests them for HTTP errors. Prints results 
 
 1. Run ```python getARKs.py```
 2. Run ```python testARKs.py [output file from step 1]```
+
+**updateARKs.py**
+
+Takes new URLs and replaces the old resolve URLs on the server so that the ARK can resolve to the new one. Requires a csv with the arks and the new URLs
+
+1. Run ```python updateARKs.py [file with urls you want to use]
