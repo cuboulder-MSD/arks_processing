@@ -44,4 +44,4 @@ This script takes a list of ARKs and tests them for HTTP errors. Prints results 
 
 Takes new URLs and replaces the old resolve URLs on the server so that the ARK can resolve to the new one. Requires a csv with the arks and the new URLs. The csv must have two columns: ```Identifier ARK#1``` which contains the ark that needs to be updated, and ```lnexp_PAGEURL``` which contains the new URL that the ARK will resolve to. This one can only be run on production
 
-1. Run ```python updateARKs.py [csv file]
+1. Run ```python updateARKs.py [csv file] ```
