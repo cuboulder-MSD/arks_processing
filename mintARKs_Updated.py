@@ -45,7 +45,7 @@ def get_field_value(reader, row, fieldnames):
     raise ValueError(f"No matching field found in {reader.fieldnames}")
 
 def get_title(reader, row):
-    return get_field_value(reader, row, ['Title#1', 'title#1', 'Title', 'County Set Name#1', 'County Set Name', 'Work Title#1', 'Work Title'])
+    return get_field_value(reader, row, ['Title#1', 'title#1', 'Title', 'County Set Name#1', 'County Set Name', 'Work Title#1', 'Work Title', 'Project-Roll-Frame'])
 
 def get_rights(reader, row):
     return get_field_value(reader, row, ['Access Condition#1', 'Access Condition#2', 'Access Condition', 'Rights#1', 'Rights', 'Image Rights#1', 'Image Rights', 'Rights Statement#1', 'Rights Statement', 'Conditions of Use#1', 'Conditions of Use', 'rightsSummary#1', 'Access restrictions#1'])
@@ -74,6 +74,8 @@ def main():
          url = chooseURL()
 
          for row in reader:
+             luna_url = row['lnexp_PAGEURL'].strip()  # Get Luna URL and remove leading/trailing whitespaces
+             
              # check if Identifier ARK#1 column exists, if not, check for Identifier ARK column
              if 'Identifier ARK#1' in row and not row['Identifier ARK#1']:
                  identifier_ark = 'Identifier ARK#1'
@@ -82,7 +84,7 @@ def main():
              else:
                  identifier_ark = None
                     
-             if identifier_ark:
+             if luna_url and identifier_ark:
                  # generate ARK
                  luna_url = row['lnexp_PAGEURL']
                  title = get_title(reader, row)
