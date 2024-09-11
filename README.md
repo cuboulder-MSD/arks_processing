@@ -4,6 +4,8 @@ This repo contains code to retrieve and mint ARKs. For both scripts you will nee
 
 You can find the auth token here https://libapps.colorado.edu/api/user/
 
+To see what metadata an ARK has, use this template https://libapps.colorado.edu/ark:/47540/[id]/detail
+
 *Note: You can only mint for collections that have a 1:1 relationship between record and item in luna. It will not work if one record is linked to multiple items.*
 
 *Do not mint for Charles F. Snow, Colorado Historical Maps, or Publishers Bindings.*
