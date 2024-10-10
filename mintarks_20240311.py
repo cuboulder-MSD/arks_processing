@@ -54,7 +54,7 @@ def get_type(reader, row):
     return get_field_value(reader, row, ['Resource Type#1', 'Resource Type', 'Type#1', 'Type', 'Type of Resource#1', 'Type of Resource', 'Work Type#1', 'Work Type', 'formatMediaType#1', 'formatMediaType#2', 'formatMediaType', 'IANA Media Type#1'])
 
 def get_filename(reader, row):
-    return get_field_value(reader, row, ['Identifier#1', 'Identifier#2', 'identifier#2', 'Identifier', 'FileID#1', 'FileID#2', 'FileID', 'File Name', 'filename'])
+    return get_field_value(reader, row, ['Identifier#1', 'Identifier#2', 'identifier#2', 'identifier#1', 'Identifier', 'FileID#1', 'FileID#2', 'FileID', 'File Name', 'filename'])
     
 def main():
     # Grab our infile_path and outfile_path from the cli
