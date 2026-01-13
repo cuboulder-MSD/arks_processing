@@ -11,6 +11,32 @@ PASSWORD = secrets.password
 PREFIX = "10.83783"
 API_URL = 'https://api.test.datacite.org/dois'
 
+# --- RESOURCE TYPE MAPPING ---
+# Maps strings from your CSV to official DataCite resourceTypeGeneral values.
+# DataCite documentation: https://schema.datacite.org/meta/kernel-4.4/doc/DataCite-MetadataKernel_v4.4.pdf
+DATACITE_TYPE_MAP = {
+    "image": "Image",
+    "still image": "Image",
+    "photograph": "Image",
+    "photo": "Image",
+    "text": "Text",
+    "book": "Text",
+    "article": "Text",
+    "dataset": "Dataset",
+    "collection": "Collection",
+    "audio": "Sound",
+    "sound": "Sound",
+    "video": "Audiovisual",
+    "moving image": "Audiovisual",
+    "software": "Software"
+}
+
+def get_mapped_type(raw_type):
+    """Helper to return valid DataCite type or default to 'Dataset'"""
+    if not raw_type:
+        return "Dataset"
+    return DATACITE_TYPE_MAP.get(raw_type.strip().lower(), "Dataset")
+
 def extract_ark_suffix(ark_string):
     if not ark_string: return None
     return ark_string.strip().rstrip('/').split('/')[-1]
@@ -51,6 +77,10 @@ def mint_ark(input_csv):
                 title = (row.get('Work Title#1') or row.get('title') or row.get('Title') or '').strip()
                 url = (row.get('lnexp_PAGEURL') or row.get('URL') or row.get('Url') or '').strip()
                 date = (row.get('Work Date#1') or row.get('date') or '2026').strip()
+                
+                # New: Extract Resource Type from CSV
+                raw_type = (row.get('Resource Type') or row.get('Type') or row.get('type') or '').strip()
+                resource_type_general = get_mapped_type(raw_type)
 
                 if not title:
                     title = f"Record for {ark_id}"
@@ -60,8 +90,8 @@ def mint_ark(input_csv):
                     stats["skipped"] += 1
                     continue
 
-                # 3. Build Payload
-                payload = {
+                # 3. Build record
+                record = {
                     "data": {
                         "type": "dois",
                         "attributes": {
@@ -72,21 +102,21 @@ def mint_ark(input_csv):
                             "titles": [{"title": title}],
                             "publisher": "University of Colorado Boulder",
                             "publicationYear": date if len(date) >= 4 else "2026",
-                            "types": {"resourceTypeGeneral": "Image"},
+                            "types": {"resourceTypeGeneral": resource_type_general},
                             "event": "publish"
                         }
                     }
                 }
 
                 # 4. API Call
-                print(f"[{i}] PROCESSING: {doi_string}")
+                print(f"[{i}] PROCESSING: {doi_string} ({resource_type_general})")
                 
                 try:
                     response = requests.post(
                         API_URL,
                         auth=(USERNAME, PASSWORD),
                         headers={"Content-Type": "application/vnd.api+json"},
-                        data=json.dumps(payload),
+                        data=json.dumps(record),
                         timeout=10
                     )
 
