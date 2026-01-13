@@ -74,7 +74,10 @@ def mint_ark(input_csv):
                 doi_string = f"{PREFIX}/{ark_suffix}".lower()
                 
                 # 2. Metadata Extraction
-                title = (row.get('Work Title#1') or row.get('title') or row.get('Title') or '').strip()
+                title = (row.get('Title#1') or row.get('title#1') or row.get('Title') or row.get('County Set Name#1') or row.get('County Set Name') or row.get('Work Title#1') or row.get('Work Title') or row.get('Project-Roll-Frame') or '').strip()
+                rights = (row.get('Access Condition#1') or row.get('Access Condition#2') or row.get('Access Condition') or row.get('Rights#1') or row.get('Rights') or row.get('Image Rights#1') or row.get('Image Rights') or row.get('Rights Statement#1') or row.get('Rights Statement') or row.get('Conditions of Use#1') or row.get('Conditions of Use') or row.get('rightsSummary#1') or row.get('Access restrictions#1') or '').strip()
+                resource_type = (row.get('Resource Type#1') or row.get('Resource Type') or row.get('Type#1') or row.get('Type') or row.get('Type of Resource#1') or row.get('Type of Resource') or row.get('Work Type#1') or row.get('Work Type') or row.get('formatMediaType#1') or row.get('formatMediaType#2') or row.get('formatMediaType') or row.get('IANA Media Type#1') or '').strip()
+                filename = (row.get('Local Identifier#1') or row.get('Local Identifier') or row.get('Identifier#1') or row.get('Identifier#2') or row.get('identifier#2') or row.get('identifier#1') or row.get('Identifier') or row.get('FileID#1') or row.get('FileID#2') or row.get('FileID') or row.get('File Name') or row.get('filename') or '').strip()
                 url = (row.get('lnexp_PAGEURL') or row.get('URL') or row.get('Url') or '').strip()
                 date = (row.get('Work Date#1') or row.get('date') or '2026').strip()
                 
