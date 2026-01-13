@@ -63,7 +63,7 @@ def mint_ark(input_csv):
 
             for i, row in enumerate(reader, 1):
                 # 1. Identity Extraction
-                ark_id = row.get('Identifier ARK#1', '').strip()
+                ark_id = (row.get('Identifier ARK#1') or row.get('Identifier ARK') or row.get('Persistent Identifier#1') or row.get('Persistent Identifier') or '').strip()
                 ark_suffix = extract_ark_suffix(ark_id)
                 
                 if not ark_suffix:
