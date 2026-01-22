@@ -135,21 +135,46 @@ def mint_ark(input_csv, max_422_retries=5):
                 # --- Extract metadata ---
                 title = (
                     row.get('Title#1')
+                    or row.get('title#1')
                     or row.get('Title')
                     or row.get('Work Title#1')
                     or row.get('Work Title')
+                    or row.get('County Set Name#1')
+                    or row.get('County Set Name')
+                    or row.get('Project-Roll-Frame')  
                     or ''
                 ).strip() or f"Record for {ark_id}"
 
                 url = (row.get('lnexp_PAGEURL') or row.get('URL') or '').strip()
 
-                raw_date = (row.get('Work Date#1') or row.get('date') or '')
+                raw_date = (
+                    row.get('Date Captured') 
+                    or row.get('Date Captured#1') 
+                    or row.get('Digital Conversion Date#1') 
+                    or row.get('Digital Conversion Date') 
+                    or row.get('Image Source#1') 
+                    or row.get('Image Source') 
+                    or row.get('Date Uploaded') 
+                    or row.get('Date Uploaded#1') 
+                    or row.get('Image Date#1') 
+                    or row.get('Image Date') 
+                    or '2026'
+                ).strip()
+                    
                 publication_year = clean_publication_year(raw_date)
 
                 raw_type = (
                     row.get('Resource Type#1')
                     or row.get('Resource Type')
                     or row.get('Type')
+                    or row.get('Type of Resource#1')
+                    or row.get('Type#1')
+                    or row.get('Type of Resource')
+                    or row.get('Work Type')
+                    or row.get('formatMediaType#1')
+                    or row.get('formatMediaType#2')
+                    or row.get('formatMediaType')
+                    or row.get('IANA Media Type#1')
                     or ''
                 ).strip()
                 resource_type_general = get_mapped_type(raw_type)
@@ -201,7 +226,10 @@ def mint_ark(input_csv, max_422_retries=5):
                             "titles": [{"title": title}],
                             "publisher": "University of Colorado Boulder",
                             "publicationYear": publication_year,
-                            "types": {"resourceTypeGeneral": resource_type_general},
+                            "types": {
+                                "resourceTypeGeneral": resource_type_general,
+                                "resourceType": raw_type or resource_type_general
+                            },
                             "event": "publish"
                         }
                     }
