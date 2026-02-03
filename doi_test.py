@@ -21,16 +21,33 @@ DATACITE_TYPE_MAP = {
     "image": "Image",
     "still image": "Image",
     "photograph": "Image",
+    "photographs": "Image",
     "photo": "Image",
+    "stillimage": "Image",
+    "photographic prints": "Image",
+    "cartographic image": "Image",
+    "sketch maps": "Image",
+    "cartographic": "Image",
+    "watercolors (paintings)": "Image",
+    "drawings (visual works)": "Image",
+    "mixed material": "Image",
+    "image/tiff": "Image",
+    "image/jpeg": "Image",
     "text": "Text",
     "book": "Text",
     "article": "Text",
+    "manuscript": "Text",
+    "tables of contents": "Text",
+    "title pages": "Text",
+    "notated music": "Text",
+    "bibliographies": "Text",
     "dataset": "Dataset",
     "collection": "Collection",
     "audio": "Sound",
     "sound": "Sound",
     "video": "Audiovisual",
     "moving image": "Audiovisual",
+    "movingimage": "Audiovisual",
     "software": "Software"
 }
 
@@ -171,10 +188,13 @@ def mint_ark(input_csv, max_422_retries=5):
                     or row.get('Type#1')
                     or row.get('Type of Resource')
                     or row.get('Work Type')
+                    or row.get('Work Type#1')
+                    or row.get('Work Type#2')
                     or row.get('formatMediaType#1')
                     or row.get('formatMediaType#2')
                     or row.get('formatMediaType')
                     or row.get('IANA Media Type#1')
+                    or row.get('Format Media Type#1')
                     or ''
                 ).strip()
                 resource_type_general = get_mapped_type(raw_type)
