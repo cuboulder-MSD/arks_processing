@@ -72,8 +72,32 @@ DATACITE_TYPE_MAP = {
 
 def get_mapped_type(raw_type):
     if not raw_type:
-        return "Dataset"
-    return DATACITE_TYPE_MAP.get(raw_type.strip().lower(), "Dataset")
+        return None
+    return DATACITE_TYPE_MAP.get(raw_type.strip().lower())
+    
+def get_local_identifier(row):
+    identifier_fields = [
+    "Identifier",
+    "Identifier#1",
+    "Identifier#2",
+    "identifier#1",
+    "Local Identifier",
+    "Local Identifier#1",
+    "Local Identifier#2",
+    "FileImage#1",
+    "FileMedia#1",
+    "File Name",
+    "File Name#1",
+    "filename",
+    "filename#1",
+    "Classification#1",
+    ]
+
+    for field in identifier_fields:
+        value = (row.get(field) or "").strip()
+        if value:
+            return value
+    return ""
     
 # ---------------- DOI ---------------- # 
 
@@ -116,16 +140,20 @@ def get_publication_year_from_row(row):
         "Digital Conversion Date", "Digital Conversion Date#1",
         "Date Uploaded", "Date Uploaded#1",
     ]
-
+    
     for field in date_fields:
-        year = extract_publication_year(row.get(field, ""))
+            
+        value = (row.get(field) or "").strip()
+            
+        if not value:
+            continue
+                
+        year = extract_publication_year(value)
+            
         if year:
-            print(f"    Publication year from '{field}': {year}")
-            return year
-
-    fallback = str(datetime.now().year)
-    print(f"    ⚠ No valid date found — using {fallback}")
-    return fallback
+            return year, field
+                
+    return None, None
 
 # ---------------- DATACITE ---------------- #
 
@@ -140,15 +168,15 @@ def post_doi(record):
 
 # ---------------- DOI Minting ---------------- #
 
-def mint_doi(input_csv):
+def mint_doi(input_csv, output_csv):
     
-    output_csv = "doi_minting_results.csv"
     stats = {"success": 0, "exists": 0, "skipped": 0, "failed": 0}
     
     with open(input_csv, "r", encoding="utf-8-sig") as f_in, \
          open(output_csv, "w", newline="", encoding="utf-8") as f_out:
                  
         reader = csv.DictReader(f_in)
+        
         # remove completely empty rows
         rows = [
             row for row in reader
@@ -160,9 +188,10 @@ def mint_doi(input_csv):
         writer = csv.DictWriter(
             f_out,
             fieldnames=[
-                "Original Identifier",
+                "Identifier",
+                "Original ARK/DOI",
                 "Work Title",
-                "DOI",
+                "Minted DOI",
                 "Status",
                 "Reason",
                 "URL",
@@ -178,7 +207,9 @@ def mint_doi(input_csv):
             print(f"\n[{i}/{total_rows}]")
             
 # ---------------- Metadata ---------------- #
-
+            
+            local_identifier = get_local_identifier(row)
+            
             title = (
                 row.get("Title#1")
                 or row.get("title#1")
@@ -190,9 +221,9 @@ def mint_doi(input_csv):
                 or row.get("County Set Name")
                 or ""
             ).strip()
-
+            
             url = (row.get("lnexp_PAGEURL") or row.get("URL") or "").strip()
-
+            
             ark_and_doi_id = (
                 row.get("Identifier ARK#1")
                 or row.get("Identifier ARK")
@@ -203,15 +234,31 @@ def mint_doi(input_csv):
 
             # --- Skipt ARK and DOI records --- #
             if ark_and_doi_id:
-                print(f"SKIP: Identifier exists ({ark_and_doi_id})")
-                stats["skipped"] += 1
+                print(f"    SKIP: Identifier exists ({ark_and_doi_id})")
+                stats["exists"] += 1
 
                 writer.writerow({
-                    "Original Identifier": ark_and_doi_id,
+                    "Identifier": local_identifier,
+                    "Original ARK/DOI": ark_and_doi_id,
                     "Work Title": title,
-                    "DOI": "",
-                    "Status": "Skipped",
+                    "Minted DOI": "",
+                    "Status": "Exists",
                     "Reason": "ARK or DOI already exists",
+                    "URL": url
+                })
+                continue
+            
+            if not title:
+                print("    SKIP: No title")
+                stats["skipped"] += 1
+                
+                writer.writerow({
+                    "Identifier": local_identifier,
+                    "Original ARK/DOI": ark_and_doi_id,
+                    "Work Title": "",
+                    "Minted DOI": "",
+                    "Status": "Skipped",
+                    "Reason": "No title",
                     "URL": url
                 })
                 continue
@@ -221,7 +268,22 @@ def mint_doi(input_csv):
                 stats["skipped"] += 1
                 continue
 
-            publication_year = get_publication_year_from_row(row)
+            publication_year, publication_field = get_publication_year_from_row(row)
+            
+            if not publication_year:
+                stats["skipped"] += 1
+                print("    SKIP: No publication date")
+                
+                writer.writerow({
+                    "Identifier": local_identifier,
+                    "Original ARK/DOI": ark_and_doi_id,
+                    "Work Title": title,
+                    "Minted DOI": "",
+                    "Status": "Skipped",
+                    "Reason": "No publication date",
+                    "URL": url
+                })
+                continue
 
             raw_type = (
                 row.get("Resource Type#1")
@@ -242,8 +304,24 @@ def mint_doi(input_csv):
             ).strip()
 
             mapped_type = get_mapped_type(raw_type)
+            
+            if not mapped_type:
+                print("    SKIP: Type mapping does not exist")
+                stats["skipped"] += 1
+                
+                writer.writerow({
+                    "Identifier": local_identifier,
+                    "Original ARK/DOI": "",
+                    "Work Title": title,
+                    "Minted DOI": "",
+                    "Status": "Skipped",
+                    "Reason": "Type Mapping does not exist",
+                    "URL": url
+                })
+                continue
 
-            # Print resource type to command line
+            # Print resource type/date to command line
+            print(f"    Publication year from '{publication_field}': {publication_year}")
             print(f"    Resource type — raw: '{raw_type or '∅'}' → mapped: {mapped_type}")
 
             doi_string = f"{PREFIX}/{generate_short_suffix()}"
@@ -271,7 +349,7 @@ def mint_doi(input_csv):
                 }
             }
 
-            sucess = False
+            success = False
             
             for _ in range(5):
                 response = post_doi(record)
@@ -293,9 +371,10 @@ def mint_doi(input_csv):
                     break
 
             writer.writerow({
-                "Original Identifier": "",
+                "Identifier": local_identifier,
+                "Original ARK/DOI": "",
                 "Work Title": title,
-                "DOI": doi_url if success else "",
+                "Minted DOI": doi_url if success else "",
                 "Status": "Created" if success else "Skipped",
                 "Reason": "" if success else "Mint failed",
                 "URL": url
@@ -311,8 +390,11 @@ def mint_doi(input_csv):
 # ---------------- ENTRY ---------------- #
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python script.py input.csv")
+    if len(sys.argv) != 3:
+        print("py script.py input.csv output.csv\n")
         sys.exit(1)
-
-    mint_doi(sys.argv[1])
+    
+    input_csv = sys.argv[1]
+    output_csv = sys.argv[2]
+    
+    mint_doi(input_csv, output_csv)
